@@ -8,6 +8,7 @@ import os
 
 from db import db  # importing db from db.py
 from routes.auth import auth_bp, bcrypt
+from flask_jwt_extended import JWTManager
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +19,10 @@ CORS(app)
 # Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configure JWT
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+jwt = JWTManager(app)
 
 # Initialize SQLAlchemy with the app
 db.init_app(app)
