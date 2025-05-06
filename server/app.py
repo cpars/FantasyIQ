@@ -6,27 +6,31 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 
-# Load .env file
+from db import db  # ✅ Now importing db from db.py
+
+# Load environment variables
 load_dotenv()
 
-# Initialize Flask app
 app = Flask(__name__)
-
-# Allow cross-origin requests (frontend and backend may run on different ports)
 CORS(app)
 
-# Database configuration
+# Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the database
-db = SQLAlchemy(app)
+# Initialize SQLAlchemy with the app
+db.init_app(app)
 
-# Simple route to test the server
+# Import models after initializing db
+from models import User, Team, Player, TeamPlayer
+
+# Create tables
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
-def index():
-    return {"message": "FantasyIQ server is running!"}
+def home():
+    return {"message": "Fantasy Sports Tracker backend is running!"}
 
-# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
