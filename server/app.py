@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 
-from db import db  # ✅ Now importing db from db.py
+from db import db  # importing db from db.py
 
 # Load environment variables
 load_dotenv()
