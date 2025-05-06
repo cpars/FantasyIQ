@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 
 from db import db  # importing db from db.py
+from routes.auth import auth_bp, bcrypt
 
 # Load environment variables
 load_dotenv()
@@ -20,6 +21,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy with the app
 db.init_app(app)
+
+# Initialize Bcrypt with the app
+bcrypt.init_app(app)
+app.register_blueprint(auth_bp)
+
 
 # Import models after initializing db
 from models import User, Team, Player, TeamPlayer
