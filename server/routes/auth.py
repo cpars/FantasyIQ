@@ -1,13 +1,18 @@
-# server/routes/auth.py
-
 from flask import Blueprint, request, jsonify
-from db import db
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity
+)
+from db import db
 from models.user import User
 
+# Set up Bcrypt and Blueprint
 bcrypt = Bcrypt()
 auth_bp = Blueprint('auth_bp', __name__)
 
+# --------------------------
+# REGISTER
+# --------------------------
 @auth_bp.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -22,15 +27,17 @@ def register():
     if User.query.filter((User.username == username) | (User.email == email)).first():
         return jsonify({"error": "Username or email already exists"}), 409
 
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, email=email, password=hashed_password)
+    hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(username=username, email=email, password=hashed_pw)
 
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"message": "User registered successfully!"}), 201
+    return jsonify({"message": "User registered successfully"}), 201
 
-
+# --------------------------
+# LOGIN
+# --------------------------
 @auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -43,4 +50,25 @@ def login():
     if not user or not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    return jsonify({"message": "Login successful", "user": user.username}), 200
+    access_token = create_access_token(identity=user.id)
+
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+    }), 200
+
+# --------------------------
+# PROTECTED ROUTE EXAMPLE
+# --------------------------
+@auth_bp.route('/api/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    user_id = get_jwt_identity()
+    return jsonify({
+        "message": f"Hello, user {user_id}! This is a protected route."
+    }), 200
