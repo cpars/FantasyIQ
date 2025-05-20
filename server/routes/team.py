@@ -42,9 +42,6 @@ def get_teams():
     teams = Team.query.filter_by(user_id=user_id).all()
 
     team_list = [{"id": team.id, "name": team.name} for team in teams]
-
-    if not team_list:
-        return jsonify({"message": "No teams found"}), 404
     
     # Return the list of teams
     return jsonify(team_list), 200
