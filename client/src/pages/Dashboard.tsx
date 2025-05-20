@@ -52,8 +52,6 @@ export default function Dashboard() {
   }
 
   function handleDelete(teamId: number) {
-    if (!confirm("Are you sure you want to delete this team?")) return;
-
     fetch(`http://localhost:5000/api/teams/${teamId}`, {
       method: "DELETE",
       headers: {
@@ -61,12 +59,15 @@ export default function Dashboard() {
       },
     })
       .then((res) => {
+        console.log("Delete status:", res.status);
         if (!res.ok) throw new Error("Delete failed");
-        // Remove team from local state
         setTeams((prev) => prev.filter((team) => team.id !== teamId));
       })
       .catch((err) => alert(err.message));
   }
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
 
   return (
     <div style={{ padding: "2rem", color: "white" }}>
@@ -164,7 +165,10 @@ export default function Dashboard() {
                 View Players
               </button>
               <button
-                onClick={() => handleDelete(team.id)}
+                onClick={() => {
+                  setTeamToDelete(team);
+                  setShowConfirm(true);
+                }}
                 style={{
                   flex: 1,
                   padding: "0.5rem",
@@ -180,6 +184,82 @@ export default function Dashboard() {
               </button>
             </div>
           ))}
+        </div>
+      )}
+      {showConfirm && teamToDelete && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "#1e1e1e",
+              padding: "2rem",
+              borderRadius: "1rem",
+              width: "90%",
+              maxWidth: "400px",
+              color: "white",
+              textAlign: "center",
+              boxShadow: "0 0 25px rgba(0,0,0,0.4)",
+            }}
+          >
+            <h2>Delete Team</h2>
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>{teamToDelete.name}</strong>?
+            </p>
+
+            <div
+              style={{
+                marginTop: "1.5rem",
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+              }}
+            >
+              <button
+                onClick={() => setShowConfirm(false)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  background: "gray",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  handleDelete(teamToDelete.id);
+                  setShowConfirm(false);
+                  setTeamToDelete(null);
+                }}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
+                  color: "white",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
