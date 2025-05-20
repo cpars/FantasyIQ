@@ -107,11 +107,48 @@ export default function Dashboard() {
       {teams.length === 0 ? (
         <p>You don’t have any teams yet.</p>
       ) : (
-        <ul>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "1rem",
+          }}
+        >
           {teams.map((team) => (
-            <li key={team.id}>{team.name}</li>
+            <div
+              key={team.id}
+              style={{
+                background: "rgba(255, 255, 255, 0.1)",
+                padding: "1.5rem",
+                borderRadius: "1rem",
+                boxShadow: "0 0 15px rgba(0,0,0,0.3)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <h3 style={{ marginBottom: "0.5rem", color: "#fff" }}>
+                {team.name}
+              </h3>
+
+              <button
+                onClick={() => navigate(`/teams/${team.id}`)}
+                style={{
+                  padding: "0.5rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  background: "linear-gradient(to right, #36d1dc, #5b86e5)",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  marginTop: "1rem",
+                }}
+              >
+                View Players
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
