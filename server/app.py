@@ -11,6 +11,7 @@ from routes.auth import auth_bp, bcrypt
 from routes.team import team_bp
 from routes.player import player_bp
 from routes.player_team import player_team_bp
+from routes.sportsdata import sportsdata_bp
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 
@@ -34,6 +35,9 @@ db.init_app(app)
 
 # Initialize Bcrypt with the app
 bcrypt.init_app(app)
+
+# Register blueprints
+app.register_blueprint(sportsdata_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(team_bp)
 app.register_blueprint(player_team_bp)
