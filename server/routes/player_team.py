@@ -41,14 +41,15 @@ def add_player_to_team(team_id):
 
 #Add test-player data
 @player_team_bp.route('/api/test-add-player', methods=['POST'])
-@jwt_required()
 def test_add_player():
     from models.player import Player
 
+    data = request.get_json()
+
     new_player = Player(
-        name="Test Player",
-        position="QB",
-        team_name="Test Team"
+        name= data.get("name","Test Player"),
+        position= data.get("position","QB"),
+        team_name= data.get("team_name","Test Team")
     )
 
     db.session.add(new_player)
