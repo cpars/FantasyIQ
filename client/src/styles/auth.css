@@ -1,29 +1,31 @@
 .auth-page {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
   min-height: 100vh;
+  padding: 2rem;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: white;
 }
 
+/* src/styles/auth.css */
+
 .auth-form {
+  display: flex;
+  flex-direction: column;
   background: rgba(255, 255, 255, 0.1);
   padding: 2rem;
   border-radius: 1rem;
   width: 100%;
   max-width: 400px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box; /* ✅ Make sure padding doesn’t mess up width */
 }
 
-.auth-form h2 {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.auth-form input {
+.auth-form input,
+.auth-form button {
+  box-sizing: border-box; /* ✅ Apply box-sizing to individual fields too */
+  display: block;
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
@@ -31,16 +33,15 @@
   border-radius: 0.5rem;
   background: rgba(255, 255, 255, 0.2);
   color: white;
+  font-size: 1rem;
+}
+
+.auth-form input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .auth-form button {
-  width: 100%;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: #ff416c;
   background: linear-gradient(to right, #ff4b2b, #ff416c);
-  color: white;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s ease;
