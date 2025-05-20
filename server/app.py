@@ -11,6 +11,7 @@ from routes.auth import auth_bp, bcrypt
 from routes.team import team_bp
 from routes.player_team import player_team_bp
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +26,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Configure JWT
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 jwt = JWTManager(app)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)  # Token expiration time
 
 # Initialize SQLAlchemy with the app
 db.init_app(app)
