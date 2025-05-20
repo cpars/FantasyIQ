@@ -51,6 +51,23 @@ export default function Dashboard() {
     navigate("/login");
   }
 
+  function handleDelete(teamId: number) {
+    if (!confirm("Are you sure you want to delete this team?")) return;
+
+    fetch(`http://localhost:5000/api/teams/${teamId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Delete failed");
+        // Remove team from local state
+        setTeams((prev) => prev.filter((team) => team.id !== teamId));
+      })
+      .catch((err) => alert(err.message));
+  }
+
   return (
     <div style={{ padding: "2rem", color: "white" }}>
       <h1>Welcome, {user?.username}</h1>
@@ -145,6 +162,21 @@ export default function Dashboard() {
                 }}
               >
                 View Players
+              </button>
+              <button
+                onClick={() => handleDelete(team.id)}
+                style={{
+                  flex: 1,
+                  padding: "0.5rem",
+                  borderRadius: "0.5rem",
+                  border: "none",
+                  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Delete
               </button>
             </div>
           ))}

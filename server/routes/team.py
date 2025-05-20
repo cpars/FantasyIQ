@@ -45,3 +45,17 @@ def get_teams():
     
     # Return the list of teams
     return jsonify(team_list), 200
+
+@team_bp.route('/api/teams/<int:team_id>', methods=['DELETE'])
+@jwt_required()
+def delete_team(team_id):
+    user_id = get_jwt_identity()
+    team = Team.query.get_or_404(team_id)
+
+    if team.user_id != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    db.session.delete(team)
+    db.session.commit()
+
+    return jsonify({"message": "Team deleted"}), 200
