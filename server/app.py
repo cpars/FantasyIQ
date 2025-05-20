@@ -8,6 +8,7 @@ import os
 
 from db import db  # importing db from db.py
 from routes.auth import auth_bp, bcrypt
+from routes.team import team_bp
 from flask_jwt_extended import JWTManager
 
 # Load environment variables
@@ -30,6 +31,7 @@ db.init_app(app)
 # Initialize Bcrypt with the app
 bcrypt.init_app(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(team_bp)
 
 
 # Import models after initializing db
