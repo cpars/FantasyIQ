@@ -30,22 +30,31 @@ def import_nfl_players():
     added_count = 0
 
     for player in players_data:
-        if not player.get("PlayerID") or not player.get("Name"):
+        if (
+            not player.get("PlayerID") or
+            not player.get("Name") or
+            not player.get("Active")
+        ):
             continue
 
-        # Avoid duplicates by PlayerID
-        if Player.query.get(player["PlayerID"]):
-            continue
+    existing = Player.query.get(player["PlayerID"])
 
+    if existing:
+        # Update existing player's info
+        existing.name = player["Name"]
+        existing.position = player.get("Position", "")
+        existing.team_name = player.get("Team", "")
+    else:
+        # Add new player
         new_player = Player(
             id=player["PlayerID"],
             name=player["Name"],
             position=player.get("Position", ""),
             team_name=player.get("Team", "")
         )
-
         db.session.add(new_player)
         added_count += 1
+
 
     db.session.commit()
 
