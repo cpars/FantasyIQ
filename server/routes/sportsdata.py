@@ -1,16 +1,16 @@
-# backend/routes/sportsdata.py
-
 import os
 import requests
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from db import db
 from models.player import Player
+from utils.permissions import admin_required
 
 sportsdata_bp = Blueprint('sportsdata_bp', __name__)
 
 @sportsdata_bp.route('/api/import-nfl-players', methods=['POST'])
 @jwt_required()
+@admin_required
 def import_nfl_players():
     api_key = os.getenv("SPORTSDATA_API_KEY")
     headers = {"Ocp-Apim-Subscription-Key": api_key}

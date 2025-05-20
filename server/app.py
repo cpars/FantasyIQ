@@ -1,10 +1,11 @@
-# backend/app.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-import os
 
 from db import db  # importing db from db.py
 from routes.auth import auth_bp, bcrypt
