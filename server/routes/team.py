@@ -37,25 +37,32 @@ def create_team():
 # --------------------------
 @team_bp.route('/api/teams', methods=['GET'])
 @jwt_required()
-def get_teams():
+def get_user_teams():
     user_id = get_jwt_identity()
     teams = Team.query.filter_by(user_id=user_id).all()
 
-    team_list = [{"id": team.id, "name": team.name} for team in teams]
-    
-    # Return the list of teams
-    return jsonify(team_list), 200
+    return jsonify([
+        {"id": team.id, "name": team.name}
+        for team in teams
+    ])
+
 
 @team_bp.route('/api/teams/<int:team_id>', methods=['DELETE'])
 @jwt_required()
 def delete_team(team_id):
     user_id = get_jwt_identity()
-    team = Team.query.get_or_404(team_id)
+    print("🔐 Authenticated user ID:", user_id)
 
-    if team.user_id != user_id:
+    team = Team.query.get_or_404(team_id)
+    print("🛠️ Team owner ID:", team.user_id)
+
+    if int(team.user_id) != int(user_id):
+        print("🚫 MISMATCH - Unauthorized delete attempt")
         return jsonify({"error": "Unauthorized"}), 403
 
     db.session.delete(team)
     db.session.commit()
 
+    print(f"✅ Deleted team: {team.name} (ID: {team.id})")
     return jsonify({"message": "Team deleted"}), 200
+
