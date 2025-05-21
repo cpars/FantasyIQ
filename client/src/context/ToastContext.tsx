@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import type { ReactNode } from "react";
+import "../styles/toast.css";
 
 interface Toast {
   id: number;

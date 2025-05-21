@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 interface Team {
   id: number;
@@ -51,6 +52,8 @@ export default function Dashboard() {
     navigate("/login");
   }
 
+  const { showToast } = useToast();
+
   function handleDelete(teamId: number) {
     fetch(`http://localhost:5000/api/teams/${teamId}`, {
       method: "DELETE",
@@ -59,11 +62,13 @@ export default function Dashboard() {
       },
     })
       .then((res) => {
-        console.log("Delete status:", res.status);
         if (!res.ok) throw new Error("Delete failed");
         setTeams((prev) => prev.filter((team) => team.id !== teamId));
+        showToast("Team deleted successfully", "success");
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => {
+        showToast(err.message, "error");
+      });
   }
 
   const [showConfirm, setShowConfirm] = useState(false);
