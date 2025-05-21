@@ -110,11 +110,13 @@ export default function TeamDetail() {
         style={{ padding: "0.5rem", marginRight: "0.5rem" }}
       >
         <option value="">Select a player</option>
-        {availablePlayers.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.name} — {p.position} ({p.team_name})
-          </option>
-        ))}
+        {availablePlayers
+          .filter((p) => !players.some((player) => player.id === p.id))
+          .map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name} — {p.position} ({p.team_name})
+            </option>
+          ))}
       </select>
 
       <button
