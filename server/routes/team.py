@@ -1,5 +1,3 @@
-# backend/routes/team.py
-
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import db
@@ -51,18 +49,18 @@ def get_user_teams():
 @jwt_required()
 def delete_team(team_id):
     user_id = get_jwt_identity()
-    print("🔐 Authenticated user ID:", user_id)
+    print("Authenticated user ID:", user_id)
 
     team = Team.query.get_or_404(team_id)
-    print("🛠️ Team owner ID:", team.user_id)
+    print("Team owner ID:", team.user_id)
 
     if int(team.user_id) != int(user_id):
-        print("🚫 MISMATCH - Unauthorized delete attempt")
+        print("MISMATCH - Unauthorized delete attempt")
         return jsonify({"error": "Unauthorized"}), 403
 
     db.session.delete(team)
     db.session.commit()
 
-    print(f"✅ Deleted team: {team.name} (ID: {team.id})")
+    print(f"Deleted team: {team.name} (ID: {team.id})")
     return jsonify({"message": "Team deleted"}), 200
 
