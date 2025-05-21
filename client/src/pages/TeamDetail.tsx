@@ -80,6 +80,22 @@ export default function TeamDetail() {
       });
   }
 
+  function handleRemovePlayer(playerId: number) {
+    fetch(`http://localhost:5000/api/teams/${id}/players/${playerId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to remove player");
+        setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+      })
+      .catch((err) => {
+        console.error("Error removing player:", err);
+      });
+  }
+
   if (loading) return <p style={{ color: "white" }}>Loading players...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
@@ -92,9 +108,23 @@ export default function TeamDetail() {
       ) : (
         <ul>
           {players.map((player) => (
-            <li key={player.id}>
+            <li key={player.id} style={{ marginBottom: "0.5rem" }}>
               <strong>{player.name}</strong> — {player.position} (
               {player.team_name})
+              <button
+                onClick={() => handleRemovePlayer(player.id)}
+                style={{
+                  marginLeft: "1rem",
+                  background: "red",
+                  color: "white",
+                  border: "none",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Remove
+              </button>
             </li>
           ))}
         </ul>
