@@ -1,6 +1,6 @@
-// src/pages/TeamDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useToast } from "../context/ToastContext";
 
 interface Player {
   id: number;
@@ -17,6 +17,7 @@ export default function TeamDetail() {
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
   const token = localStorage.getItem("token");
 
   // Fetch current players on the team
@@ -72,11 +73,20 @@ export default function TeamDetail() {
         return res.json();
       })
       .then((data) => {
+        if (!data.player) {
+          console.warn("No player in response:", data);
+          showToast("Unexpected response. Could not add player.", "error");
+          return;
+        }
+
         setPlayers((prev) => [...prev, data.player]);
         setSelectedPlayerId(null);
+        showToast("Player added successfully!", "success");
       })
+
       .catch((err) => {
         console.error("Error adding player:", err);
+        showToast("Failed to add player", "error");
       });
   }
 
@@ -90,9 +100,11 @@ export default function TeamDetail() {
       .then((res) => {
         if (!res.ok) throw new Error("Failed to remove player");
         setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+        showToast("Player removed", "success");
       })
       .catch((err) => {
         console.error("Error removing player:", err);
+        showToast("Failed to remove player", "error");
       });
   }
 

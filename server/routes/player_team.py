@@ -1,4 +1,3 @@
-# backend/routes/player_team.py
 
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -14,30 +13,33 @@ player_team_bp = Blueprint('player_team_bp', __name__)
 @jwt_required()
 def add_player_to_team(team_id):
     user_id = get_jwt_identity()
-    data = request.get_json()
-    player_id = data.get('player_id')
-
-    # Check if team belongs to user
     team = Team.query.filter_by(id=team_id, user_id=user_id).first()
     if not team:
         return jsonify({"error": "Team not found or unauthorized"}), 404
 
-    # Check if player exists
-    player = Player.query.get(player_id)
-    if not player:
-        return jsonify({"error": "Player not found"}), 404
+    data = request.get_json()
+    player_id = data.get("player_id")
+    if not player_id:
+        return jsonify({"error": "Player ID is required"}), 400
 
-    # Prevent duplicates
-    existing = TeamPlayer.query.filter_by(team_id=team_id, player_id=player_id).first()
-    if existing:
-        return jsonify({"error": "Player already on team"}), 409
+    if any(tp.player_id == player_id for tp in team.players):
+        return jsonify({"error": "Player already on team"}), 400
 
-    # Add player to team
-    team_player = TeamPlayer(team_id=team_id, player_id=player_id)
-    db.session.add(team_player)
+    new_tp = TeamPlayer(team_id=team_id, player_id=player_id)
+    db.session.add(new_tp)
     db.session.commit()
 
-    return jsonify({"message": "Player added to team!"}), 201
+    # Get player info to return
+    player = Player.query.get(player_id)
+    return jsonify({
+        "message": "Player added successfully",
+        "player": {
+            "id": player.id,
+            "name": player.name,
+            "position": player.position,
+            "team_name": player.team_name
+        }
+    }), 201
 
 #Add test-player data
 @player_team_bp.route('/api/test-add-player', methods=['POST'])
