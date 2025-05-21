@@ -12,15 +12,23 @@ interface Player {
 export default function TeamDetail() {
   const { id } = useParams(); // team ID from URL
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const { showToast } = useToast();
+
   const [players, setPlayers] = useState<Player[]>([]);
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { showToast } = useToast();
   const [filterPosition, setFilterPosition] = useState("");
   const [filterTeam, setFilterTeam] = useState("");
-  const token = localStorage.getItem("token");
+
+  const uniquePositions = Array.from(
+    new Set(availablePlayers.map((p) => p.position))
+  ).sort();
+  const uniqueTeams = Array.from(
+    new Set(availablePlayers.map((p) => p.team_name))
+  ).sort();
 
   // Fetch current players on the team
   useEffect(() => {
@@ -154,12 +162,11 @@ export default function TeamDetail() {
           onChange={(e) => setFilterPosition(e.target.value)}
         >
           <option value="">All</option>
-          <option value="QB">QB</option>
-          <option value="RB">RB</option>
-          <option value="WR">WR</option>
-          <option value="TE">TE</option>
-          <option value="DEF">DEF</option>
-          <option value="K">K</option>
+          {uniquePositions.map((pos) => (
+            <option key={pos} value={pos}>
+              {pos}
+            </option>
+          ))}
         </select>
 
         <label style={{ marginLeft: "1rem" }}>Filter by Team: </label>
@@ -168,12 +175,11 @@ export default function TeamDetail() {
           onChange={(e) => setFilterTeam(e.target.value)}
         >
           <option value="">All</option>
-          <option value="KC">KC</option>
-          <option value="BUF">BUF</option>
-          <option value="SF">SF</option>
-          <option value="DAL">DAL</option>
-          <option value="PHI">PHI</option>
-          {/* add more teams or dynamically generate */}
+          {uniqueTeams.map((team) => (
+            <option key={team} value={team}>
+              {team}
+            </option>
+          ))}
         </select>
       </div>
 
