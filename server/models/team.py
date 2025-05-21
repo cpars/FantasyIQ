@@ -14,5 +14,9 @@ class Team(db.Model):
     # One team can have many players (through TeamPlayer)
     players = db.relationship('TeamPlayer', backref='team', lazy=True)
 
+    # One team can have many roster settings
+    # (e.g., max players per position)
+    roster_settings = db.relationship('RosterSettings', back_populates='team', cascade="all, delete-orphan")
+
     def __repr__(self):
         return f"<Team {self.name}>"

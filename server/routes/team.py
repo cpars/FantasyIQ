@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import db
 from models.team import Team
+from models.roster_settings import RosterSettings
 
 team_bp = Blueprint('team_bp', __name__)
 
@@ -20,7 +21,24 @@ def create_team():
 
     new_team = Team(name=name, user_id=user_id)
     db.session.add(new_team)
-    db.session.commit()
+    db.session.commit() 
+
+    
+    default_settings = {
+        "QB": 2,
+        "RB": 2,
+        "WR": 2,
+        "TE": 1,
+        "FLEX": 1,
+        "K": 1,
+        "DEF": 1
+    }
+
+    for position, count in default_settings.items():
+        setting = RosterSettings(team_id=new_team.id, position=position, max_count=count)
+        db.session.add(setting)
+
+    db.session.commit() 
 
     return jsonify({
         "message": "Team created successfully!",
