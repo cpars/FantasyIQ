@@ -32,6 +32,8 @@ export default function TeamDetail() {
     () => Array.from(new Set(availablePlayers.map((p) => p.team_name))).sort(),
     [availablePlayers]
   );
+  //
+  const draftablePositions = ["QB", "RB", "WR", "TE", "K", "DEF"];
 
   // Fetch current players on the team
   useEffect(() => {
@@ -211,6 +213,7 @@ export default function TeamDetail() {
       >
         <option value="">Select a player</option>
         {availablePlayers
+          .filter((p) => draftablePositions.includes(p.position))
           .filter((p) => !players.some((tp) => tp.id === p.id))
           .filter((p) =>
             filterPosition ? p.position === filterPosition : true

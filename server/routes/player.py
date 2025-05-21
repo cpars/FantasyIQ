@@ -2,6 +2,7 @@
 
 from flask import Blueprint, jsonify, request
 from models.player import Player
+from db import db  # in case you need it for anything else
 
 player_bp = Blueprint('player_bp', __name__)
 
@@ -10,8 +11,11 @@ def get_all_players():
     position = request.args.get('position')
     team_name = request.args.get('team_name')
 
-    # Start with all players
-    query = Player.query
+    # Fantasy-relevant positions
+    valid_positions = ["QB", "RB", "WR", "TE", "K", "DEF"]
+
+    # Start with only valid fantasy positions
+    query = Player.query.filter(Player.position.in_(valid_positions))
 
     # Apply filters if provided
     if position:
