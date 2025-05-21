@@ -18,6 +18,8 @@ export default function TeamDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
+  const [filterPosition, setFilterPosition] = useState("");
+  const [filterTeam, setFilterTeam] = useState("");
   const token = localStorage.getItem("token");
 
   // Fetch current players on the team
@@ -145,6 +147,35 @@ export default function TeamDetail() {
       <hr style={{ margin: "2rem 0" }} />
 
       <h2>Add a Player</h2>
+      <div style={{ marginBottom: "1rem" }}>
+        <label>Filter by Position: </label>
+        <select
+          value={filterPosition}
+          onChange={(e) => setFilterPosition(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="QB">QB</option>
+          <option value="RB">RB</option>
+          <option value="WR">WR</option>
+          <option value="TE">TE</option>
+          <option value="DEF">DEF</option>
+          <option value="K">K</option>
+        </select>
+
+        <label style={{ marginLeft: "1rem" }}>Filter by Team: </label>
+        <select
+          value={filterTeam}
+          onChange={(e) => setFilterTeam(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="KC">KC</option>
+          <option value="BUF">BUF</option>
+          <option value="SF">SF</option>
+          <option value="DAL">DAL</option>
+          <option value="PHI">PHI</option>
+          {/* add more teams or dynamically generate */}
+        </select>
+      </div>
 
       <select
         value={selectedPlayerId ?? ""}
@@ -153,7 +184,11 @@ export default function TeamDetail() {
       >
         <option value="">Select a player</option>
         {availablePlayers
-          .filter((p) => !players.some((player) => player.id === p.id))
+          .filter((p) => !players.some((tp) => tp.id === p.id))
+          .filter((p) =>
+            filterPosition ? p.position === filterPosition : true
+          )
+          .filter((p) => (filterTeam ? p.team_name === filterTeam : true))
           .map((p) => (
             <option key={p.id} value={p.id}>
               {p.name} — {p.position} ({p.team_name})
