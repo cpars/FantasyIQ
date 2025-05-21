@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
+import { useMemo } from "react";
 
 interface Player {
   id: number;
@@ -23,12 +24,14 @@ export default function TeamDetail() {
   const [filterPosition, setFilterPosition] = useState("");
   const [filterTeam, setFilterTeam] = useState("");
 
-  const uniquePositions = Array.from(
-    new Set(availablePlayers.map((p) => p.position))
-  ).sort();
-  const uniqueTeams = Array.from(
-    new Set(availablePlayers.map((p) => p.team_name))
-  ).sort();
+  const uniquePositions = useMemo(
+    () => Array.from(new Set(availablePlayers.map((p) => p.position))).sort(),
+    [availablePlayers]
+  );
+  const uniqueTeams = useMemo(
+    () => Array.from(new Set(availablePlayers.map((p) => p.team_name))).sort(),
+    [availablePlayers]
+  );
 
   // Fetch current players on the team
   useEffect(() => {
