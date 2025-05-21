@@ -185,11 +185,29 @@ export default function TeamDetail() {
           ))}
         </select>
       </div>
+      {!filterPosition && !filterTeam && (
+        <p
+          style={{
+            color: "lightgray",
+            fontStyle: "italic",
+            marginTop: "0.5rem",
+          }}
+        >
+          Select a position or team to view available players.
+        </p>
+      )}
 
       <select
         value={selectedPlayerId ?? ""}
         onChange={(e) => setSelectedPlayerId(Number(e.target.value))}
-        style={{ padding: "0.5rem", marginRight: "0.5rem" }}
+        disabled={!filterPosition && !filterTeam}
+        style={{
+          width: "35ch",
+          padding: "0.5rem",
+          marginRight: "0.5rem",
+          backgroundColor: !filterPosition && !filterTeam ? "#ccc" : "white",
+          color: !filterPosition && !filterTeam ? "#666" : "black",
+        }}
       >
         <option value="">Select a player</option>
         {availablePlayers
