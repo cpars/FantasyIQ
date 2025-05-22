@@ -4,7 +4,7 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 // import Players from "../pages/Players";
 import TeamDetail from "../pages/TeamDetail";
-// import Admin from "../pages/Admin";
+import AdminDashboard from "../pages/AdminDashboard";
 
 export default function AppRouter() {
   return (
@@ -15,7 +15,7 @@ export default function AppRouter() {
         <Route path="/register" element={<Register />} />
         {/* <Route path="/players" element={<Players />} /> */}
         <Route path="/teams/:id" element={<TeamDetail />} />
-        {/* <Route path="/admin" element={<Admin />} /> */}
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );
