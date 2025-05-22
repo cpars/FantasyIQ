@@ -204,24 +204,29 @@ export default function TeamDetail() {
             <p style={{ fontStyle: "italic" }}>No roster settings found.</p>
           ) : (
             <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-              {rosterStatus.map((item) => (
-                <li key={item.position}>
-                  {item.position}:{" "}
-                  <span
-                    style={{
-                      color:
-                        item.used >= item.limit
-                          ? "red"
-                          : item.used >= item.limit - 1
-                          ? "orange"
-                          : "lightgreen",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {item.used} / {item.limit}
-                  </span>
-                </li>
-              ))}
+              {[...rosterStatus]
+                .sort((a, b) => {
+                  const order = ["QB", "RB", "WR", "TE", "FLEX", "K", "DEF"];
+                  return order.indexOf(a.position) - order.indexOf(b.position);
+                })
+                .map((item) => (
+                  <li key={item.position}>
+                    {item.position}:{" "}
+                    <span
+                      style={{
+                        color:
+                          item.used >= item.limit
+                            ? "red"
+                            : item.used >= item.limit - 1
+                            ? "orange"
+                            : "lightgreen",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {item.used} / {item.limit}
+                    </span>
+                  </li>
+                ))}
             </ul>
           )}
         </div>
