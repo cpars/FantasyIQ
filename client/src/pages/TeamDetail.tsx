@@ -157,62 +157,68 @@ export default function TeamDetail() {
 
   return (
     <div style={{ padding: "2rem", color: "white" }}>
-      <h1>Players on Team #{id}</h1>
+      <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+        {/* Players List */}
+        <div style={{ flex: 2 }}>
+          <h1>Players on Team #{id}</h1>
 
-      <div style={{ margin: "1rem 0" }}>
-        <h3>Roster Status</h3>
-        {rosterStatus.length === 0 ? (
-          <p style={{ fontStyle: "italic" }}>No roster settings found.</p>
-        ) : (
-          <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-            {rosterStatus.map((item) => (
-              <li key={item.position}>
-                {item.position}:{" "}
-                <span
-                  style={{
-                    color:
-                      item.used >= item.limit
-                        ? "red"
-                        : item.used >= item.limit - 1
-                        ? "orange"
-                        : "lightgreen",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {item.used} / {item.limit}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+          {players.length === 0 ? (
+            <p>No players on this team yet.</p>
+          ) : (
+            <ul>
+              {players.map((player) => (
+                <li key={player.id} style={{ marginBottom: "0.5rem" }}>
+                  <strong>{player.name}</strong> — {player.position} (
+                  {player.team_name})
+                  <button
+                    onClick={() => handleRemovePlayer(player.id)}
+                    style={{
+                      marginLeft: "1rem",
+                      background: "red",
+                      color: "white",
+                      border: "none",
+                      padding: "0.25rem 0.75rem",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Roster Status */}
+        <div style={{ flex: 1 }}>
+          <h3>Roster Status</h3>
+          {rosterStatus.length === 0 ? (
+            <p style={{ fontStyle: "italic" }}>No roster settings found.</p>
+          ) : (
+            <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+              {rosterStatus.map((item) => (
+                <li key={item.position}>
+                  {item.position}:{" "}
+                  <span
+                    style={{
+                      color:
+                        item.used >= item.limit
+                          ? "red"
+                          : item.used >= item.limit - 1
+                          ? "orange"
+                          : "lightgreen",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {item.used} / {item.limit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
-
-      {players.length === 0 ? (
-        <p>No players on this team yet.</p>
-      ) : (
-        <ul>
-          {players.map((player) => (
-            <li key={player.id} style={{ marginBottom: "0.5rem" }}>
-              <strong>{player.name}</strong> — {player.position} (
-              {player.team_name})
-              <button
-                onClick={() => handleRemovePlayer(player.id)}
-                style={{
-                  marginLeft: "1rem",
-                  background: "red",
-                  color: "white",
-                  border: "none",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
 
       <hr style={{ margin: "2rem 0" }} />
 
