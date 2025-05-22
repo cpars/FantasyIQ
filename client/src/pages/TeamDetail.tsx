@@ -31,6 +31,7 @@ export default function TeamDetail() {
   const [rosterStatus, setRosterStatus] = useState<RosterStatus[]>([]);
 
   const draftablePositions = ["QB", "RB", "WR", "TE", "K", "DEF"];
+  const positionOrder = ["QB", "RB", "WR", "TE", "K", "DEF"];
 
   const uniquePositions = useMemo(
     () => Array.from(new Set(availablePlayers.map((p) => p.position))).sort(),
@@ -166,26 +167,32 @@ export default function TeamDetail() {
             <p>No players on this team yet.</p>
           ) : (
             <ul>
-              {players.map((player) => (
-                <li key={player.id} style={{ marginBottom: "0.5rem" }}>
-                  <strong>{player.name}</strong> — {player.position} (
-                  {player.team_name})
-                  <button
-                    onClick={() => handleRemovePlayer(player.id)}
-                    style={{
-                      marginLeft: "1rem",
-                      background: "red",
-                      color: "white",
-                      border: "none",
-                      padding: "0.25rem 0.75rem",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Remove
-                  </button>
-                </li>
-              ))}
+              {[...players]
+                .sort(
+                  (a, b) =>
+                    positionOrder.indexOf(a.position) -
+                    positionOrder.indexOf(b.position)
+                )
+                .map((player) => (
+                  <li key={player.id} style={{ marginBottom: "0.5rem" }}>
+                    <strong>{player.name}</strong> — {player.position} (
+                    {player.team_name})
+                    <button
+                      onClick={() => handleRemovePlayer(player.id)}
+                      style={{
+                        marginLeft: "1rem",
+                        background: "red",
+                        color: "white",
+                        border: "none",
+                        padding: "0.25rem 0.75rem",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
             </ul>
           )}
         </div>
