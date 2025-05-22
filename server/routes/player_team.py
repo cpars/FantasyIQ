@@ -4,7 +4,7 @@ from db import db
 from models.team import Team
 from models.player import Player
 from models.team_player import TeamPlayer
-from models.roster_settings import RosterSettings
+from models.roster_settings import RosterSetting
 from sqlalchemy import func
 
 player_team_bp = Blueprint('player_team_bp', __name__)
@@ -43,12 +43,12 @@ def add_player_to_team(team_id):
     )
 
     # Get core position limit
-    pos_setting = RosterSettings.query.filter_by(team_id=team.id, position=player_pos).first()
-    pos_max = pos_setting.max_count if pos_setting else 0
+    pos_setting = RosterSetting.query.filter_by(team_id=team.id, position=player_pos).first()
+    pos_max = pos_setting.limit if pos_setting else 0
 
     # Get FLEX info
-    flex_setting = RosterSettings.query.filter_by(team_id=team.id, position="FLEX").first()
-    flex_max = flex_setting.max_count if flex_setting else 0
+    flex_setting = RosterSetting.query.filter_by(team_id=team.id, position="FLEX").first()
+    flex_max = flex_setting.limit if flex_setting else 0
 
     eligible_players = (
         db.session.query(Player.position)
@@ -63,8 +63,8 @@ def add_player_to_team(team_id):
         counts[pos] += 1
 
     for pos in eligible_flex_positions:
-        setting = RosterSettings.query.filter_by(team_id=team.id, position=pos).first()
-        max_pos = setting.max_count if setting else 0
+        setting = RosterSetting.query.filter_by(team_id=team.id, position=pos).first()
+        max_pos = setting.limit if setting else 0
         if counts[pos] > max_pos:
             flex_used += counts[pos] - max_pos
 

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import db
 from models.team import Team
-from models.roster_settings import RosterSettings
+from models.roster_settings import RosterSetting
 
 team_bp = Blueprint('team_bp', __name__)
 
@@ -35,7 +35,7 @@ def create_team():
     }
 
     for position, count in default_settings.items():
-        setting = RosterSettings(team_id=new_team.id, position=position, max_count=count)
+        setting = RosterSetting(team_id=new_team.id, position=position, limit=count)
         db.session.add(setting)
 
     db.session.commit() 

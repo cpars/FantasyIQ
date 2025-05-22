@@ -14,6 +14,7 @@ from routes.player import player_bp
 from routes.player_team import player_team_bp
 from routes.sportsdata import sportsdata_bp
 from routes.user import user_bp
+from routes.roster import roster_bp
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from datetime import timedelta
@@ -46,6 +47,7 @@ app.register_blueprint(team_bp)
 app.register_blueprint(player_team_bp)
 app.register_blueprint(player_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(roster_bp)
 
 
 # Import models after initializing db
