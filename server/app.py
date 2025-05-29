@@ -1,32 +1,65 @@
-# backend/app.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-import os
 
-# Load .env file
+from db import db  # importing db from db.py
+from routes.auth import auth_bp, bcrypt
+from routes.team import team_bp
+from routes.player import player_bp
+from routes.player_team import player_team_bp
+from routes.sportsdata import sportsdata_bp
+from routes.user import user_bp
+from routes.roster import roster_bp
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from datetime import timedelta
+
+# Load environment variables
 load_dotenv()
 
-# Initialize Flask app
 app = Flask(__name__)
-
-# Allow cross-origin requests (frontend and backend may run on different ports)
 CORS(app)
 
-# Database configuration
+# Configure database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize the database
-db = SQLAlchemy(app)
+# Configure JWT
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+jwt = JWTManager(app)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)  # Token expiration time
 
-# Simple route to test the server
+# Initialize SQLAlchemy with the app
+db.init_app(app)
+
+# Initialize Bcrypt with the app
+bcrypt.init_app(app)
+
+# Register blueprints
+app.register_blueprint(sportsdata_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(team_bp)
+app.register_blueprint(player_team_bp)
+app.register_blueprint(player_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(roster_bp)
+
+
+# Import models after initializing db
+from models import User, Team, Player, TeamPlayer
+
+# Create tables
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
-def index():
-    return {"message": "FantasyIQ server is running!"}
+def home():
+    return {"message": "Fantasy Sports Tracker backend is running!"}
 
-# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
